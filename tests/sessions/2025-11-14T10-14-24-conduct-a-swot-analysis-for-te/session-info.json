@@ -1,0 +1,18 @@
+{
+  "sessionId": "2025-11-14T10-14-24-conduct-a-swot-analysis-for-te",
+  "timestamp": "2025-11-14T10:14:24.987Z",
+  "testName": "Phase 1: Basic Orchestration",
+  "testQuery": "Conduct a SWOT analysis for Tesla as an investment opportunity over a 3-5 year horizon, with focus on competitive positioning versus other EV manufacturers.",
+  "models": {
+    "orchestrator": "claude-sonnet-4-5-20250929",
+    "lenses": {
+      "dragonfly-swot": "claude-sonnet-4-5-20250929"
+    }
+  },
+  "config": {
+    "maxToolCalls": 50,
+    "maxSubagentSpawns": 5,
+    "maxRecursionDepth": 3
+  },
+  "status": "running"
+}

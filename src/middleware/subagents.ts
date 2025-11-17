@@ -27,6 +27,19 @@ const EXCLUDED_STATE_KEYS = ["messages", "todos", "jumpTo"] as const;
 const DEFAULT_GENERAL_PURPOSE_DESCRIPTION =
   "General-purpose agent for researching complex questions, searching for files and content, and executing multi-step tasks. When you are searching for a keyword or file and are not confident that you will find the right match in the first few tries use this agent to perform the search for you. This agent has access to all tools as the main agent.";
 
+const SUBAGENT_DEBUG_FLAG =
+  process.env.DEEPAGENTS_DEBUG_SUBAGENTS?.toLowerCase?.() ?? "";
+const SUBAGENT_DEBUG_ENABLED =
+  SUBAGENT_DEBUG_FLAG === "1" ||
+  SUBAGENT_DEBUG_FLAG === "true" ||
+  SUBAGENT_DEBUG_FLAG === "yes";
+
+function debugSubagentLog(...args: unknown[]) {
+  if (SUBAGENT_DEBUG_ENABLED) {
+    console.log("[DeepAgents|Subagent]", ...args);
+  }
+}
+
 // Comprehensive task tool description from Python
 function getTaskToolDescription(subagentDescriptions: string[]): string {
   return `
@@ -292,6 +305,14 @@ function getSubagents(options: {
     const interruptOn = agentParams.interruptOn || defaultInterruptOn;
     if (interruptOn) middleware.push(humanInTheLoopMiddleware({ interruptOn }));
 
+    debugSubagentLog("Creating subagent", {
+      name: agentParams.name,
+      hasCustomTools: !!agentParams.tools,
+      defaultToolsCount: defaultTools.length,
+      middlewareCount: middleware.length,
+      middlewareNames: middleware.map((m: any) => m.name || "unnamed"),
+    });
+
     agents[agentParams.name] = createAgent({
       model: agentParams.model ?? defaultModel,
       systemPrompt: agentParams.systemPrompt,
@@ -363,11 +384,39 @@ function createTaskTool(options: {
       const subagentState = filterStateForSubagent(currentState);
       subagentState.messages = [new HumanMessage({ content: description })];
 
-      // Invoke the subagent
-      const result = (await subagent.invoke(subagentState)) as Record<
-        string,
-        unknown
-      >;
+      debugSubagentLog("Invoking subagent", {
+        subagent_type,
+        toolCallId: config.toolCall?.id,
+        stateKeys: Object.keys(subagentState),
+        messageCount: Array.isArray(subagentState.messages) ? subagentState.messages.length : 0,
+        recursionLimit: config.recursionLimit || 100,
+      });
+      const startTime = Date.now();
+
+      let result: Record<string, unknown>;
+      try {
+        result = (await subagent.invoke(subagentState, {
+          recursionLimit: config.recursionLimit || 100,
+        })) as Record<string, unknown>;
+      } catch (error) {
+        debugSubagentLog("Subagent invocation failed", {
+          subagent_type,
+          durationMs: Date.now() - startTime,
+          error:
+            error instanceof Error
+              ? { name: error.name, message: error.message }
+              : error,
+        });
+        throw error;
+      }
+
+      debugSubagentLog("Subagent completed", {
+        subagent_type,
+        durationMs: Date.now() - startTime,
+        messageCount: Array.isArray((result as any).messages)
+          ? (result as any).messages.length
+          : undefined,
+      });
 
       // Return command with filtered state update
       if (!config.toolCall?.id) {

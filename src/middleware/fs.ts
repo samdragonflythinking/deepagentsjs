@@ -95,7 +95,7 @@ const FILESYSTEM_SYSTEM_PROMPT = `You have access to a virtual filesystem. All f
 export const LS_TOOL_DESCRIPTION = "List files and directories in a directory";
 export const READ_FILE_TOOL_DESCRIPTION = "Read the contents of a file";
 export const WRITE_FILE_TOOL_DESCRIPTION =
-  "Write content to a new file. Returns an error if the file already exists";
+  "Write content to a new file. REQUIRES both file_path (absolute path) AND content (the file contents) parameters. Returns an error if the file already exists";
 export const EDIT_FILE_TOOL_DESCRIPTION =
   "Edit a file by replacing a specific string with a new string";
 export const GLOB_TOOL_DESCRIPTION =
@@ -203,7 +203,13 @@ function createWriteFileTool(
         store: (config as any).store,
       };
       const resolvedBackend = getBackend(backend, stateAndStore);
-      const { file_path, content } = input;
+      const { file_path, content = "" } = input;
+
+      // Validate content is provided and non-empty
+      if (!content || content.trim() === '') {
+        return `ERROR: write_file requires BOTH file_path AND content parameters. You provided file_path="${file_path}" but content is missing or empty. Please call write_file again with the complete file contents in the content parameter.`;
+      }
+
       const result = await awaitIfPromise(
         resolvedBackend.write(file_path, content),
       );
@@ -236,7 +242,7 @@ function createWriteFileTool(
       description: customDescription || WRITE_FILE_TOOL_DESCRIPTION,
       schema: z3.object({
         file_path: z3.string().describe("Absolute path to the file to write"),
-        content: z3.string().describe("Content to write to the file"),
+        content: z3.string().optional().describe("Content to write to the file - REQUIRED, must not be empty"),
       }),
     },
   );

@@ -1,0 +1,15 @@
+{
+  "testName": "Phase 1: Basic Orchestration",
+  "testQuery": "Run SWOT analysis on Tesla for a 3-5 year investment thesis. Use competitive benchmarking against major EV competitors. Proceed immediately with the analysis.",
+  "models": {
+    "orchestrator": "claude-sonnet-4-5-20250929",
+    "lenses": {
+      "dragonfly-swot": "claude-sonnet-4-5-20250929"
+    }
+  },
+  "limits": {
+    "maxToolCalls": 50,
+    "maxSubagentSpawns": 5,
+    "maxRecursionDepth": 3
+  }
+}

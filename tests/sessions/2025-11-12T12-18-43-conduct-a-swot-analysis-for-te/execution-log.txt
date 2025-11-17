@@ -1,0 +1,24 @@
+=== Dragonfly POC Test Session ===
+Session ID: 2025-11-12T12-18-43-conduct-a-swot-analysis-for-te
+Test: Phase 1: Basic Orchestration
+Query: Conduct a SWOT analysis for Tesla as an investment opportunity over a 3-5 year horizon, with focus on competitive positioning versus other EV manufacturers.
+Started: 2025-11-12T12:18:43.842Z
+
+=== Execution Log ===
+
+[2025-11-12T12:18:43.843Z] Saving prompts to session directory
+
+[2025-11-12T12:18:43.844Z] Workspace directory: /Users/sam/Documents/GitHub/deepagentsjs/tests/sessions/2025-11-12T12-18-43-conduct-a-swot-analysis-for-te/outputs
+
+[2025-11-12T12:18:43.844Z] Models configured
+
+[2025-11-12T12:18:43.844Z] Creating orchestrator agent with SWOT lens
+
+[2025-11-12T12:18:43.850Z] ERROR: Middleware FilesystemMiddleware is defined multiple times
+
+[2025-11-12T12:18:43.850Z] Session FAILED
+
+[2025-11-12T12:18:43.850Z] Duration: 0s
+
+[2025-11-12T12:18:43.850Z] Error: Middleware FilesystemMiddleware is defined multiple times
+

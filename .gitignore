@@ -49,3 +49,6 @@ credentials.json
 .langgraph_api
 
 **/.claude/settings.local.json
+
+# Dragonfly POC test sessions
+tests/dragonfly-poc/sessions/

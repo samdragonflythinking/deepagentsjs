@@ -1,0 +1,19 @@
+{
+  "sessionId": "2025-11-12T10-46-14-run-swot-analysis-on-tesla",
+  "timestamp": "2025-11-12T10:46:14.706Z",
+  "testName": "Phase 1: Basic Orchestration",
+  "testQuery": "Run SWOT analysis on Tesla",
+  "models": {
+    "orchestrator": "claude-sonnet-4-5-20250929",
+    "lenses": {
+      "dragonfly-swot": "claude-sonnet-4-5-20250929"
+    }
+  },
+  "config": {
+    "maxToolCalls": 50,
+    "maxSubagentSpawns": 5,
+    "maxRecursionDepth": 3
+  },
+  "status": "success",
+  "duration": "7s"
+}

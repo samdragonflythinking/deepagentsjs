@@ -1,0 +1,42 @@
+=== Dragonfly POC Test Session ===
+Session ID: 2025-11-12T12-37-23-conduct-a-swot-analysis-for-te
+Test: Phase 1: Basic Orchestration
+Query: Conduct a SWOT analysis for Tesla as an investment opportunity over a 3-5 year horizon, with focus on competitive positioning versus other EV manufacturers.
+Started: 2025-11-12T12:37:23.820Z
+
+=== Execution Log ===
+
+[2025-11-12T12:37:23.823Z] Saving prompts to session directory
+
+[2025-11-12T12:37:23.823Z] Workspace directory: /Users/sam/Documents/GitHub/deepagentsjs/tests/sessions/2025-11-12T12-37-23-conduct-a-swot-analysis-for-te/outputs
+
+[2025-11-12T12:37:23.823Z] Models configured
+
+[2025-11-12T12:37:23.823Z] Creating orchestrator agent with SWOT lens
+
+[2025-11-12T12:37:23.829Z] Orchestrator agent created with SWOT lens registered
+
+[2025-11-12T12:37:23.829Z] Test query: Conduct a SWOT analysis for Tesla as an investment opportunity over a 3-5 year horizon, with focus on competitive positioning versus other EV manufacturers.
+
+[2025-11-12T12:37:23.829Z] Starting agent execution with streaming
+
+[2025-11-12T12:37:23.840Z] Received chunk 1
+
+[2025-11-12T12:37:23.841Z] Received chunk 2
+
+[2025-11-12T12:37:35.853Z] Received chunk 3
+
+[2025-11-12T13:50:24.168Z] ERROR: Error in middleware "FilesystemMiddleware": Recursion limit of 100 reached without hitting a stop condition. You can increase the limit by setting the "recursionLimit" config key.
+
+Troubleshooting URL: https://docs.langchain.com/oss/javascript/langgraph/GRAPH_RECURSION_LIMIT/
+
+
+[2025-11-12T13:50:24.170Z] Session FAILED
+
+[2025-11-12T13:50:24.170Z] Duration: 4380s
+
+[2025-11-12T13:50:24.170Z] Error: Error in middleware "FilesystemMiddleware": Recursion limit of 100 reached without hitting a stop condition. You can increase the limit by setting the "recursionLimit" config key.
+
+Troubleshooting URL: https://docs.langchain.com/oss/javascript/langgraph/GRAPH_RECURSION_LIMIT/
+
+

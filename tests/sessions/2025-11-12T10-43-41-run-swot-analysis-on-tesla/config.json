@@ -1,0 +1,15 @@
+{
+  "testName": "Phase 1: Basic Orchestration",
+  "testQuery": "Run SWOT analysis on Tesla",
+  "models": {
+    "orchestrator": "claude-sonnet-4-5-20250929",
+    "lenses": {
+      "dragonfly-swot": "claude-sonnet-4-5-20250929"
+    }
+  },
+  "limits": {
+    "maxToolCalls": 50,
+    "maxSubagentSpawns": 5,
+    "maxRecursionDepth": 3
+  }
+}

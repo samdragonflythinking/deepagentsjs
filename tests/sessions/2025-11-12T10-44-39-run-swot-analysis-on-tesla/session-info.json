@@ -1,0 +1,20 @@
+{
+  "sessionId": "2025-11-12T10-44-39-run-swot-analysis-on-tesla",
+  "timestamp": "2025-11-12T10:44:39.524Z",
+  "testName": "Phase 1: Basic Orchestration",
+  "testQuery": "Run SWOT analysis on Tesla",
+  "models": {
+    "orchestrator": "claude-sonnet-4-5-20250929",
+    "lenses": {
+      "dragonfly-swot": "claude-sonnet-4-5-20250929"
+    }
+  },
+  "config": {
+    "maxToolCalls": 50,
+    "maxSubagentSpawns": 5,
+    "maxRecursionDepth": 3
+  },
+  "status": "failed",
+  "duration": "56s",
+  "error": "Error in middleware \"FilesystemMiddleware\": Recursion limit of 25 reached without hitting a stop condition. You can increase the limit by setting the \"recursionLimit\" config key.\n\nTroubleshooting URL: https://docs.langchain.com/oss/javascript/langgraph/GRAPH_RECURSION_LIMIT/\n"
+}

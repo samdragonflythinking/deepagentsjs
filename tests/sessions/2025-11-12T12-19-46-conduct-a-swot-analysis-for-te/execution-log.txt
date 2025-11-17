@@ -1,0 +1,20 @@
+=== Dragonfly POC Test Session ===
+Session ID: 2025-11-12T12-19-46-conduct-a-swot-analysis-for-te
+Test: Phase 1: Basic Orchestration
+Query: Conduct a SWOT analysis for Tesla as an investment opportunity over a 3-5 year horizon, with focus on competitive positioning versus other EV manufacturers.
+Started: 2025-11-12T12:19:46.169Z
+
+=== Execution Log ===
+
+[2025-11-12T12:19:46.174Z] Saving prompts to session directory
+
+[2025-11-12T12:19:46.174Z] Workspace directory: /Users/sam/Documents/GitHub/deepagentsjs/tests/sessions/2025-11-12T12-19-46-conduct-a-swot-analysis-for-te/outputs
+
+[2025-11-12T12:19:46.175Z] Models configured
+
+[2025-11-12T12:19:46.175Z] Creating orchestrator agent with SWOT lens
+
+[2025-11-12T12:19:46.185Z] Orchestrator agent created with SWOT lens registered
+
+[2025-11-12T12:19:46.185Z] Test query: Conduct a SWOT analysis for Tesla as an investment opportunity over a 3-5 year horizon, with focus on competitive positioning versus other EV manufacturers.
+

@@ -1,0 +1,26 @@
+=== Dragonfly POC Test Session ===
+Session ID: 2025-11-12T10-43-41-run-swot-analysis-on-tesla
+Test: Phase 1: Basic Orchestration
+Query: Run SWOT analysis on Tesla
+Started: 2025-11-12T10:43:41.368Z
+
+=== Execution Log ===
+
+[2025-11-12T10:43:41.369Z] Saving prompts to session directory
+
+[2025-11-12T10:43:41.370Z] Workspace directory: /Users/sam/Documents/GitHub/deepagentsjs/tests/sessions/2025-11-12T10-43-41-run-swot-analysis-on-tesla/outputs
+
+[2025-11-12T10:43:41.370Z] Models configured
+
+[2025-11-12T10:43:41.370Z] Creating SWOT subagent
+
+[2025-11-12T10:43:41.376Z] Creating orchestrator agent
+
+[2025-11-12T10:43:41.376Z] ERROR: `model` option is required to create an agent.
+
+[2025-11-12T10:43:41.376Z] Session FAILED
+
+[2025-11-12T10:43:41.376Z] Duration: 0s
+
+[2025-11-12T10:43:41.376Z] Error: `model` option is required to create an agent.
+

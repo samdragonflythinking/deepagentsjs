@@ -1,0 +1,20 @@
+{
+  "sessionId": "2025-11-12T12-37-23-conduct-a-swot-analysis-for-te",
+  "timestamp": "2025-11-12T12:37:23.820Z",
+  "testName": "Phase 1: Basic Orchestration",
+  "testQuery": "Conduct a SWOT analysis for Tesla as an investment opportunity over a 3-5 year horizon, with focus on competitive positioning versus other EV manufacturers.",
+  "models": {
+    "orchestrator": "claude-sonnet-4-5-20250929",
+    "lenses": {
+      "dragonfly-swot": "claude-sonnet-4-5-20250929"
+    }
+  },
+  "config": {
+    "maxToolCalls": 50,
+    "maxSubagentSpawns": 5,
+    "maxRecursionDepth": 3
+  },
+  "status": "failed",
+  "duration": "4380s",
+  "error": "Error in middleware \"FilesystemMiddleware\": Recursion limit of 100 reached without hitting a stop condition. You can increase the limit by setting the \"recursionLimit\" config key.\n\nTroubleshooting URL: https://docs.langchain.com/oss/javascript/langgraph/GRAPH_RECURSION_LIMIT/\n"
+}
