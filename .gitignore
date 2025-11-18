@@ -52,3 +52,6 @@ credentials.json
 
 # Dragonfly POC test sessions
 tests/dragonfly-poc/sessions/
+
+# Agent testing directory - timestamped session directories
+agent-testing/20*/
