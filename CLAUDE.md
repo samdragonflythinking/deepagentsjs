@@ -22,6 +22,8 @@ This repository is being evaluated as a potential alternative to Claude Agent SD
 ### Key Documentation
 - **Migration Plan:** `docs/planning/deepagents-migration-plan-v2.md` (detailed 5-phase test plan)
 - **Current Status:** `docs/planning/STATUS.md` (approval checklist, next steps)
+- **Test Findings:** `docs/planning/test-findings.md` (validation results, performance metrics)
+- **Prompt Engineering Guide:** `docs/planning/prompt-engineering-guide.md` (best practices for lens prompts)
 - **Dragonfly Architecture:** `docs/DTclaude-multi-agent-setup/` (current system reference)
 - **Prompt Adaptation:** `docs/planning/prompt-adaptation-guide.md` (porting guide)
 
@@ -262,6 +264,7 @@ When implementing features for the Dragonfly migration test, follow these patter
 - Research evidence using available tools (file reading, web search if available)
 - Create markdown artifact via `write_file` tool to `/outputs/` directory
 - Can reference past artifacts for cumulative intelligence
+- **CRITICAL**: Follow prompt engineering best practices in `docs/planning/prompt-engineering-guide.md` to prevent recursion loops
 
 **Artifact Structure:**
 - YAML frontmatter with metadata (title, lens, date, word_count, key_findings)

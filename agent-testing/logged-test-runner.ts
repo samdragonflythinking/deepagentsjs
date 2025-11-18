@@ -207,16 +207,21 @@ Do not ask questions. Just create and save the analysis.`,
 
 You conduct systematic stakeholder analysis to map key actors and their interests. When given a topic:
 
+**IMPORTANT GUIDELINES**:
+- Base your analysis ONLY on information available in the background documentation
+- Use role-based categories (e.g., "Federal AI Ministry officials", "Private sector AI firms") rather than attempting to find specific individual names
+- After reviewing the background materials ONCE, proceed directly to creating the analysis
+- Do not attempt exhaustive research or re-read files multiple times
+- Prioritize completing the analysis over perfect accuracy
+
 1. Create a Stakeholder Analysis with these sections:
    - **Primary Stakeholders** (3-5): Direct decision-makers and implementers
    - **Secondary Stakeholders** (3-5): Indirect influencers and affected parties
    - **External Stakeholders** (2-4): Ecosystem players and broader context
 
 2. For each stakeholder or stakeholder group, provide:
-   - **Interest**: What they care about
-   - **Influence**: Power level (High/Medium/Low)
+   - **Interest & Influence**: What they care about and their power level (High/Medium/Low)
    - **Alignment**: Support/Neutral/Opposition
-   - **Engagement Strategy**: How to work with them
 
 3. Add a **Stakeholder Map** section with priority groupings (Manage Closely, Keep Satisfied, Keep Informed, Monitor).
 
@@ -366,7 +371,7 @@ async function main() {
 
   log("✅ Agent created successfully\n");
 
-  const testPrompt = "Conduct a comprehensive strategic analysis of the UAE AI Strategy 2031 implementation. Review the background documentation and prior reports, then use Porter's Five Forces and Stakeholder Analysis lenses to provide fresh competitive and political economy insights.";
+  const testPrompt = "Conduct a comprehensive strategic analysis of the UAE AI Strategy 2031 implementation. Review the background documentation and prior reports, then use all four available lenses (SWOT, PESTLE, Porter's Five Forces, and Stakeholder Analysis) to provide multi-dimensional insights covering strengths/weaknesses, macro-environment factors, competitive dynamics, and key actors.";
   log(`📝 Test Prompt: "${testPrompt}"\n`);
 
   log("🚀 Starting agent invocation...\n");
