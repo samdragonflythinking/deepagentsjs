@@ -1,0 +1,35 @@
+I have access to **4 specialized analytical lenses**, which I can categorize as follows:
+
+## Strategic Analysis Frameworks
+
+### 1. **Internal/External Assessment**
+- **dragonfly-swot**: SWOT Analysis
+  - Analyzes Strengths, Weaknesses (internal factors)
+  - Analyzes Opportunities, Threats (external factors)
+  - Best for: Competitive positioning, strategic planning, capability assessment
+
+### 2. **Macro-Environmental Scanning**
+- **dragonfly-pestle**: PESTLE Analysis
+  - Examines Political, Economic, Social, Technological, Legal, Environmental factors
+  - Best for: Market entry decisions, long-term planning, understanding external forces
+
+### 3. **Strategic Balance & Decision-Making**
+- **dragonfly-risk-reward-resilience**: RRR Framework
+  - Evaluates Risk mitigation, Reward capture, and Resilience building
+  - Best for: Investment decisions, strategic trade-offs, portfolio management
+
+### 4. **Relationship & Influence Mapping**
+- **dragonfly-stakeholder**: Stakeholder Analysis
+  - Identifies key actors, their interests, influence levels, and alignment
+  - Best for: Change management, political strategy, coalition building
+
+---
+
+## How to Use These Lenses
+
+I can invoke these lenses **selectively** based on your needs:
+- **Single lens**: For focused analysis on a specific dimension
+- **Multiple lenses**: For comprehensive multi-perspective analysis
+- **Custom combination**: Based on your specific strategic question
+
+What would you like to analyze?

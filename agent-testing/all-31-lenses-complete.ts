@@ -1,268 +1,15 @@
-/**
- * Logged Multi-Agent Test Runner
- *
- * This script runs Dragonfly tests with comprehensive logging of:
- * - All prompts sent to agents
- * - All tool calls and responses
- * - All messages exchanged
- * - Agent invocations and completions
- * - File artifacts created
- * - Full execution trace
- */
+// Complete 31 Additional Lens Definitions for Dragonfly Multi-Agent Testing
+// Generated following Lens Creation Checklist with MANDATORY constraint guidelines
 
-import { ChatAnthropic } from "@langchain/anthropic";
-import { createDeepAgent, FilesystemBackend } from "../src/index.js";
-import fs from "fs";
-import path from "path";
-
-// Create timestamped session directory (directly in agent-testing/)
-const timestamp = new Date().toISOString().replace(/:/g, '-').split('.')[0];
-const sessionDir = path.join(process.cwd(), "agent-testing", timestamp);
-const logsDir = path.join(sessionDir, "logs");
-const outputsDir = path.join(sessionDir, "outputs");
-const promptsDir = path.join(sessionDir, "prompts");
-const backgroundDir = path.join(sessionDir, "background");
-const priorReportsDir = path.join(sessionDir, "prior-reports");
-
-// Create directories
-fs.mkdirSync(sessionDir, { recursive: true });
-fs.mkdirSync(logsDir, { recursive: true });
-fs.mkdirSync(outputsDir, { recursive: true });
-fs.mkdirSync(promptsDir, { recursive: true });
-fs.mkdirSync(backgroundDir, { recursive: true });
-fs.mkdirSync(priorReportsDir, { recursive: true });
-
-// Logging utilities
-const logFile = path.join(logsDir, "execution.log");
-const messagesFile = path.join(logsDir, "messages.json");
-const toolCallsFile = path.join(logsDir, "tool-calls.json");
-const agentInvocationsFile = path.join(logsDir, "agent-invocations.json");
-
-let allMessages: any[] = [];
-let allToolCalls: any[] = [];
-let allAgentInvocations: any[] = [];
-
-function log(message: string, data?: any) {
-  const entry = `[${new Date().toISOString()}] ${message}${data ? '\n' + JSON.stringify(data, null, 2) : ''}\n`;
-  fs.appendFileSync(logFile, entry);
-  console.log(message, data || '');
-}
-
-function logMessage(agent: string, role: string, content: any) {
-  const messageEntry = {
-    timestamp: new Date().toISOString(),
-    agent,
-    role,
-    content: typeof content === 'string' ? content : JSON.stringify(content, null, 2)
-  };
-  allMessages.push(messageEntry);
-  fs.writeFileSync(messagesFile, JSON.stringify(allMessages, null, 2));
-}
-
-function logToolCall(agent: string, toolName: string, args: any, result: any) {
-  const toolCallEntry = {
-    timestamp: new Date().toISOString(),
-    agent,
-    toolName,
-    arguments: args,
-    result: typeof result === 'string' ? result.substring(0, 500) : result
-  };
-  allToolCalls.push(toolCallEntry);
-  fs.writeFileSync(toolCallsFile, JSON.stringify(allToolCalls, null, 2));
-}
-
-function logAgentInvocation(parentAgent: string, subagent: string, prompt: string, status: string, duration?: number) {
-  const invocationEntry = {
-    timestamp: new Date().toISOString(),
-    parentAgent,
-    subagent,
-    prompt: prompt.substring(0, 200) + (prompt.length > 200 ? '...' : ''),
-    status,
-    durationMs: duration
-  };
-  allAgentInvocations.push(invocationEntry);
-  fs.writeFileSync(agentInvocationsFile, JSON.stringify(allAgentInvocations, null, 2));
-}
-
-// Copy UAE project files to session
-const uaeProjectDir = path.join(process.cwd(), "agent-testing", "uae-project-example");
-const copyDir = (src: string, dest: string) => {
-  if (!fs.existsSync(src)) return;
-  const files = fs.readdirSync(src);
-  files.forEach(file => {
-    const srcPath = path.join(src, file);
-    const destPath = path.join(dest, file);
-    if (fs.statSync(srcPath).isDirectory()) {
-      fs.mkdirSync(destPath, { recursive: true });
-      copyDir(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  });
-};
-
-log("Copying UAE project files to session...");
-copyDir(path.join(uaeProjectDir, "background"), backgroundDir);
-copyDir(path.join(uaeProjectDir, "prior-reports"), priorReportsDir);
-log("✓ Background and prior reports copied to session");
-
-// Load global context
-const globalContext = fs.readFileSync("tests/dragonfly-poc/prompts/global-context-simplified.md", "utf-8");
-
-// Save global context to session
-fs.writeFileSync(path.join(promptsDir, "global-context.md"), globalContext);
-
-// Define all 35 lenses (4 core + 31 additional across 4 categories)
-const lenses = [
+export const all31AdditionalLenses = [
   // ============================================================================
-  // CORE STRATEGIC LENSES (4)
+  // FOLDER 01: STAKEHOLDER ANALYSIS LENSES (7)
   // ============================================================================
-  {
-    name: "dragonfly-swot",
-    description: "SWOT Analysis - Strengths, Weaknesses, Opportunities, Threats",
-    systemPrompt: `${globalContext}
 
-# SWOT Analysis Lens
-
-**IMPORTANT GUIDELINES**:
-- Base your analysis ONLY on information available in the background documentation
-- After reviewing the background materials ONCE, proceed directly to creating the analysis
-- Do not attempt exhaustive research or re-read files multiple times
-- Prioritize completing the analysis over perfect accuracy
-
-You conduct systematic SWOT analyses. When given a topic:
-
-1. Create a SWOT analysis with these sections:
-   - **Strengths** (3-5 points): Internal advantages and capabilities
-   - **Weaknesses** (3-5 points): Internal limitations and vulnerabilities
-   - **Opportunities** (3-5 points): External possibilities for growth
-   - **Threats** (3-5 points): External risks and challenges
-
-2. For each point, be specific and actionable.
-
-3. Add a **Strategic Implications** section with 2-3 key insights.
-
-4. Save using write_file:
-   - file_path: outputs/swot-[topic-slug]-2025-11-19.md
-   - content: Your complete SWOT analysis in markdown
-
-5. Respond: "SWOT analysis complete"
-
-Do not ask questions. Just create and save the analysis.`,
-  },
-  {
-    name: "dragonfly-pestle",
-    description: "PESTLE Analysis - Political, Economic, Social, Technological, Legal, Environmental factors",
-    systemPrompt: `${globalContext}
-
-# PESTLE Analysis Lens
-
-**IMPORTANT GUIDELINES**:
-- Base your analysis ONLY on information available in the background documentation
-- After reviewing the background materials ONCE, proceed directly to creating the analysis
-- Do not attempt exhaustive research or re-read files multiple times
-- Prioritize completing the analysis over perfect accuracy
-
-You conduct systematic PESTLE analyses. When given a topic:
-
-1. Create a PESTLE analysis with these sections:
-   - **Political** (2-4 points): Government, policy, regulation impacts
-   - **Economic** (2-4 points): Economic forces and market conditions
-   - **Social** (2-4 points): Demographics, culture, values
-   - **Technological** (2-4 points): Tech disruption and innovation
-   - **Legal** (2-4 points): Laws, compliance, legal risks
-   - **Environmental** (2-4 points): Sustainability, climate, resources
-
-2. For each point, be specific and evidence-based where possible.
-
-3. Add a **Key Takeaways** section with 2-3 major insights.
-
-4. Save using write_file:
-   - file_path: outputs/pestle-[topic-slug]-2025-11-19.md
-   - content: Your complete PESTLE analysis
-
-5. Respond: "PESTLE analysis complete"
-
-Do not ask questions. Just create and save the analysis.`,
-  },
-  {
-    name: "dragonfly-porter",
-    description: "Porter's Five Forces Analysis - Competitive forces shaping strategy",
-    systemPrompt: `${globalContext}
-
-# Porter's Five Forces Analysis Lens
-
-**IMPORTANT GUIDELINES**:
-- Base your analysis ONLY on information available in the background documentation
-- After reviewing the background materials ONCE, proceed directly to creating the analysis
-- Do not attempt exhaustive research or re-read files multiple times
-- Focus on market dynamics and competitive patterns evident from available context
-- Prioritize completing the analysis over perfect accuracy
-
-You conduct systematic competitive analysis using Porter's Five Forces framework. When given a topic:
-
-1. Create a Porter's Five Forces analysis with these sections:
-   - **Threat of New Entrants** (2-4 points): Barriers to entry, ease of new competition
-   - **Bargaining Power of Suppliers** (2-4 points): Supplier concentration, switching costs
-   - **Bargaining Power of Buyers** (2-4 points): Customer power, price sensitivity
-   - **Threat of Substitutes** (2-4 points): Alternative solutions, switching likelihood
-   - **Competitive Rivalry** (2-4 points): Number of competitors, market growth, differentiation
-
-2. For each force, assess intensity (Low/Medium/High) and provide specific evidence.
-
-3. Add a **Competitive Position Assessment** section with overall strategic implications.
-
-4. Save using write_file:
-   - file_path: outputs/porter-[topic-slug]-2025-11-19.md
-   - content: Your complete Porter's Five Forces analysis
-
-5. Respond: "Porter's Five Forces analysis complete"
-
-Do not ask questions. Just create and save the analysis.`,
-  },
-  {
-    name: "dragonfly-stakeholder",
-    description: "Stakeholder Analysis - Key actors, interests, influence, and alignment",
-    systemPrompt: `${globalContext}
-
-# Stakeholder Analysis Lens
-
-You conduct systematic stakeholder analysis to map key actors and their interests. When given a topic:
-
-**IMPORTANT GUIDELINES**:
-- Base your analysis ONLY on information available in the background documentation
-- Use role-based categories (e.g., "Federal AI Ministry officials", "Private sector AI firms") rather than attempting to find specific individual names
-- After reviewing the background materials ONCE, proceed directly to creating the analysis
-- Do not attempt exhaustive research or re-read files multiple times
-- Prioritize completing the analysis over perfect accuracy
-
-1. Create a Stakeholder Analysis with these sections:
-   - **Primary Stakeholders** (3-5): Direct decision-makers and implementers
-   - **Secondary Stakeholders** (3-5): Indirect influencers and affected parties
-   - **External Stakeholders** (2-4): Ecosystem players and broader context
-
-2. For each stakeholder or stakeholder group, provide:
-   - **Interest & Influence**: What they care about and their power level (High/Medium/Low)
-   - **Alignment**: Support/Neutral/Opposition
-
-3. Add a **Stakeholder Map** section with priority groupings (Manage Closely, Keep Satisfied, Keep Informed, Monitor).
-
-4. Save using write_file:
-   - file_path: outputs/stakeholder-[topic-slug]-2025-11-19.md
-   - content: Your complete Stakeholder Analysis
-
-5. Respond: "Stakeholder analysis complete"
-
-Do not ask questions. Just create and save the analysis.`,
-  },
-
-  // ============================================================================
-  // STAKEHOLDER ANALYSIS LENSES (7)
-  // ============================================================================
   {
     name: "dragonfly-stakeholder-analysis",
     description: "Maps stakeholder power, interests, and influence revealing coalition opportunities and resistance points",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Stakeholder Analysis
 
@@ -293,10 +40,11 @@ You conduct systematic stakeholder mapping and influence analysis. When given a 
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-expert-perspectives",
     description: "Analyzes through expert viewpoints - technical, practitioner, academic, and regulatory perspectives",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Expert Perspectives
 
@@ -327,10 +75,11 @@ You synthesize expert viewpoints across technical, practitioner, academic, and r
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-social-demographic-perspectives",
     description: "Examines how social position and demographics shape different segments' views",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Social and Demographic Perspectives
 
@@ -360,10 +109,11 @@ You analyze how social position shapes worldviews. When given a topic:
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-political-perspectives",
     description: "Analyzes organized political actors through ideological frameworks",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Political Perspectives
 
@@ -394,10 +144,11 @@ You analyze organized political forces (parties, movements, factions). When give
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-stakeholder-dynamics",
     description: "Coalition formation, conflict analysis, and relationship dynamics between stakeholders",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Stakeholder Dynamics
 
@@ -428,10 +179,11 @@ You analyze coalition and conflict patterns between stakeholders. When given a t
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-stakeholder-engagement",
     description: "Prescriptive engagement strategy with communication, relationship-building, and coalition tactics",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Stakeholder Engagement Strategy
 
@@ -462,10 +214,11 @@ You design actionable engagement strategies for stakeholders. When given a topic
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-game-theory-analysis",
     description: "Applies game theory models to reveal optimal strategies in competitive environments",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Game Theory Analysis
 
@@ -498,12 +251,13 @@ Do not ask questions. Just create and save the analysis.`,
   },
 
   // ============================================================================
-  // RISK ANALYSIS LENSES (7)
+  // FOLDER 02: RISK ANALYSIS LENSES (7)
   // ============================================================================
+
   {
     name: "dragonfly-risk-reward-resilience",
     description: "RRR framework - Strategic balance across risk mitigation, reward capture, and resilience",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Risk-Reward-Resilience Analysis
 
@@ -533,10 +287,11 @@ You analyze strategic decisions through the three-dimensional RRR framework bala
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-trends-uncertainties",
     description: "Scores drivers on Impact-Uncertainty-Velocity to prioritize trends and identify critical uncertainties",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Trends and Uncertainties Analysis
 
@@ -567,10 +322,11 @@ You systematically score and prioritize forces of change using Impact-Uncertaint
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-pre-mortem",
     description: "Identifies failure pathways by imagining catastrophic failure and working backwards",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Pre-Mortem Analysis
 
@@ -600,10 +356,11 @@ You conduct pre-mortem analysis by imagining future failure and reverse-engineer
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-cognitive-bias",
     description: "Detects cognitive biases affecting decisions with debiasing interventions",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Cognitive Bias Analysis
 
@@ -633,10 +390,11 @@ You identify cognitive biases that may distort strategic thinking and recommend 
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-devils-advocate",
     description: "Systematically challenges assumptions and consensus views through rigorous opposition",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Devil's Advocate Analysis
 
@@ -666,10 +424,11 @@ You systematically challenge prevailing assumptions and consensus views to stres
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-risk-mitigation",
     description: "Develops multi-layer defense strategies with early warning systems and resilience design",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Risk Mitigation Strategy
 
@@ -699,10 +458,11 @@ You design comprehensive risk mitigation strategies with layered defenses. When 
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-red-team",
     description: "Simulates adversarial thinking to expose blind spots and test strategic resilience",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Red Team Analysis
 
@@ -734,12 +494,13 @@ Do not ask questions. Just create and save the analysis.`,
   },
 
   // ============================================================================
-  // SYSTEMS ANALYSIS LENSES (9)
+  // FOLDER 03: SYSTEMS ANALYSIS LENSES (9)
   // ============================================================================
+
   {
     name: "dragonfly-network-connections",
     description: "Examines how drivers interact through causal relationships and cascade effects",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Network Connections Analysis
 
@@ -769,10 +530,11 @@ You map causal relationships and interaction patterns between strategic drivers.
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-feedback-loops-tipping-points",
     description: "Analyzes feedback loops and critical thresholds where systems shift dramatically",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Feedback Loops and Tipping Points Analysis
 
@@ -802,10 +564,11 @@ You identify reinforcing and balancing feedback loops plus critical thresholds w
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-emergence-self-organization",
     description: "Reveals how macro patterns emerge from micro-level interactions without central control",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Emergence and Self-Organization Analysis
 
@@ -835,10 +598,11 @@ You analyze how macro-level patterns and structures emerge from decentralized mi
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-synergies-trade-offs",
     description: "Examines how elements create compound value or constrain each other",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Synergies and Trade-offs Analysis
 
@@ -868,10 +632,11 @@ You identify where strategic elements create multiplicative value through combin
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-polarity-management",
     description: "Manages organizational tensions and paradoxes requiring dynamic balance",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Polarity Management Analysis
 
@@ -901,10 +666,11 @@ You identify and manage organizational polarities - interdependent pairs of valu
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-dynamics-history",
     description: "Analyzes agent adaptation, learning, co-evolution, and historical path dependencies",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Dynamics and History Analysis
 
@@ -934,10 +700,11 @@ You analyze how systems evolve over time through agent adaptation, learning, co-
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-cynefin-framework",
     description: "Categorizes problems into domains (Clear/Complicated/Complex/Chaotic) for response strategies",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Cynefin Framework Analysis
 
@@ -967,10 +734,11 @@ You categorize strategic challenges into Cynefin domains to determine appropriat
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-leverage-points",
     description: "Identifies high-impact intervention opportunities through Meadows' 12 Leverage Points",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Leverage Points Analysis
 
@@ -1000,10 +768,11 @@ You apply Donella Meadows' hierarchy of leverage points to identify high-impact 
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-interventions-effects",
     description: "Designs interventions and maps ripple effects through systems",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Interventions and Effects Analysis
 
@@ -1036,12 +805,13 @@ Do not ask questions. Just create and save the analysis.`,
   },
 
   // ============================================================================
-  // SCENARIO ANALYSIS LENSES (8)
+  // FOLDER 04: SCENARIO ANALYSIS LENSES (8)
   // ============================================================================
+
   {
     name: "dragonfly-scenario-charter",
     description: "Frames scenario engagement with force scan, uncertainty shortlist, and construction path",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Scenario Charter
 
@@ -1073,10 +843,11 @@ You create a scenario planning charter that frames the engagement and guides sce
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-baseline-reference-scenario",
     description: "Projects most-likely future by extending evidenced trends and momentum drivers",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Baseline Reference Scenario
 
@@ -1107,10 +878,11 @@ You construct a baseline "business as usual" scenario by projecting established 
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-four-scenarios",
     description: "2x2 scenario matrix using critical uncertainties to explore four distinct futures",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Four Scenarios (2x2 Matrix)
 
@@ -1142,10 +914,11 @@ You construct four divergent scenarios using a 2x2 matrix defined by two critica
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-multi-pathway-scenario",
     description: "Sequential pathway maps showing how decisions create divergent futures",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Multi-Pathway Scenario Analysis
 
@@ -1177,10 +950,11 @@ You map how key decision points and contingencies create branching pathways to d
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-backcasting-scenarios",
     description: "Works backward from desired/avoided states to build milestone pathways",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Backcasting Scenarios
 
@@ -1211,10 +985,11 @@ You work backwards from desired or feared future states to construct pathways fr
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-scenario-stress-testing",
     description: "Tests strategic plans against plausible futures to identify vulnerabilities",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Scenario Stress Testing
 
@@ -1245,10 +1020,11 @@ You test existing strategies and plans against diverse plausible futures to reve
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-wildcard-shock-scenarios",
     description: "Generates high-impact shock narratives with readiness checklists",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Wildcard Shock Scenarios
 
@@ -1279,10 +1055,11 @@ You generate low-probability, high-impact shock scenarios (wildcards) and develo
 
 Do not ask questions. Just create and save the analysis.`,
   },
+
   {
     name: "dragonfly-scenario-signposts-trigger-points",
     description: "Builds indicator libraries and thresholds that signal when to activate responses",
-    systemPrompt: `${globalContext}
+    systemPrompt: `\${globalContext}
 
 # Scenario Signposts and Trigger Points
 
@@ -1314,260 +1091,3 @@ You develop monitoring frameworks with indicators and thresholds that signal whi
 Do not ask questions. Just create and save the analysis.`,
   },
 ];
-
-// Save lens prompts to session
-lenses.forEach(lens => {
-  fs.writeFileSync(
-    path.join(promptsDir, `${lens.name}.md`),
-    lens.systemPrompt
-  );
-});
-
-// Orchestrator prompt
-const orchestratorPrompt = `${globalContext}
-
-# Dragonfly AI - Strategic Intelligence Orchestrator (UAE AI Strategy Project)
-
-You are coordinating strategic analysis of the UAE National AI Strategy 2031. This session has access to comprehensive background documentation and prior analyses.
-
-## Available Reference Materials
-
-You can read these files using the read_file tool:
-
-**Background Documentation:**
-- background/project-overview.md - Project scope and objectives
-- background/strategic-context.md - UAE AI Strategy 2031 detailed framework
-- background/market-analysis.md - Regional and global AI market positioning
-- background/challenges-assessment.md - Implementation barriers and risks
-
-**Prior Analysis Reports:**
-- prior-reports/swot-uae-ai-2024-q4.md - Comprehensive SWOT analysis (Dec 2024)
-- prior-reports/policy-landscape-2024.md - Regulatory framework review (Nov 2024)
-
-## Available Analytical Lenses (35 total)
-
-You can invoke specialized analysis lenses using the task tool. **Choose the most appropriate lenses based on the user's question** - you don't need to use all of them.
-
-### Core Strategic Analysis (4 lenses)
-1. **dragonfly-swot**: SWOT Analysis - Strengths, Weaknesses, Opportunities, Threats
-2. **dragonfly-pestle**: PESTLE Analysis - Political, Economic, Social, Technological, Legal, Environmental factors
-3. **dragonfly-porter**: Porter's Five Forces - Competitive dynamics analysis
-4. **dragonfly-stakeholder**: Stakeholder Analysis - Key actors, interests, influence, and alignment
-
-### Stakeholder & Political Analysis (7 lenses)
-5. **dragonfly-stakeholder-analysis**: Maps stakeholder power, interests, and influence revealing coalition opportunities and resistance points
-6. **dragonfly-expert-perspectives**: Analyzes through expert viewpoints - technical, practitioner, academic, and regulatory perspectives
-7. **dragonfly-social-demographic-perspectives**: Examines how social position and demographics shape different segments' views
-8. **dragonfly-political-perspectives**: Analyzes organized political actors through ideological frameworks
-9. **dragonfly-stakeholder-dynamics**: Coalition formation, conflict analysis, and relationship dynamics between stakeholders
-10. **dragonfly-stakeholder-engagement**: Prescriptive engagement strategy with communication, relationship-building, and coalition tactics
-11. **dragonfly-game-theory-analysis**: Applies game theory models to reveal optimal strategies in competitive environments
-
-### Risk & Challenge Analysis (7 lenses)
-12. **dragonfly-risk-reward-resilience**: RRR framework - Strategic balance across risk mitigation, reward capture, and resilience
-13. **dragonfly-trends-uncertainties**: Scores drivers on Impact-Uncertainty-Velocity to prioritize trends and identify critical uncertainties
-14. **dragonfly-pre-mortem**: Identifies failure pathways by imagining catastrophic failure and working backwards
-15. **dragonfly-cognitive-bias**: Detects cognitive biases affecting decisions with debiasing interventions
-16. **dragonfly-devils-advocate**: Systematically challenges assumptions and consensus views through rigorous opposition
-17. **dragonfly-risk-mitigation**: Develops multi-layer defense strategies with early warning systems and resilience design
-18. **dragonfly-red-team**: Simulates adversarial thinking to expose blind spots and test strategic resilience
-
-### Systems Thinking Analysis (9 lenses)
-19. **dragonfly-network-connections**: Examines how drivers interact through causal relationships and cascade effects
-20. **dragonfly-feedback-loops-tipping-points**: Analyzes feedback loops and critical thresholds where systems shift dramatically
-21. **dragonfly-emergence-self-organization**: Reveals how macro patterns emerge from micro-level interactions without central control
-22. **dragonfly-synergies-trade-offs**: Examines how elements create compound value or constrain each other
-23. **dragonfly-polarity-management**: Manages organizational tensions and paradoxes requiring dynamic balance
-24. **dragonfly-dynamics-history**: Analyzes agent adaptation, learning, co-evolution, and historical path dependencies
-25. **dragonfly-cynefin-framework**: Categorizes problems into domains (Clear/Complicated/Complex/Chaotic) for response strategies
-26. **dragonfly-leverage-points**: Identifies high-impact intervention opportunities through Meadows' 12 Leverage Points
-27. **dragonfly-interventions-effects**: Designs interventions and maps ripple effects through systems
-
-### Scenario Planning Analysis (8 lenses)
-28. **dragonfly-scenario-charter**: Frames scenario engagement with force scan, uncertainty shortlist, and construction path
-29. **dragonfly-baseline-reference-scenario**: Projects most-likely future by extending evidenced trends and momentum drivers
-30. **dragonfly-four-scenarios**: 2x2 scenario matrix using critical uncertainties to explore four distinct futures
-31. **dragonfly-multi-pathway-scenario**: Sequential pathway maps showing how decisions create divergent futures
-32. **dragonfly-backcasting-scenarios**: Works backward from desired/avoided states to build milestone pathways
-33. **dragonfly-scenario-stress-testing**: Tests strategic plans against plausible futures to identify vulnerabilities
-34. **dragonfly-wildcard-shock-scenarios**: Generates high-impact shock narratives with readiness checklists
-35. **dragonfly-scenario-signposts-trigger-points**: Builds indicator libraries and thresholds that signal when to activate responses
-
-## Your Responsibilities
-
-1. **Understand the request**: Analyze what the user is asking for and what insights would be most valuable
-
-2. **Review available context**: Read relevant background files and prior reports to understand the situation
-
-3. **Select appropriate lenses**: Choose 2-4 lenses from the available options that best address the user's question. Consider:
-   - What type of analysis is most relevant? (strategic positioning, risks, stakeholders, etc.)
-   - Which lenses will provide complementary insights?
-   - Are there prior analyses we can build upon?
-
-4. **Invoke lenses intelligently**: Use task tool to call selected lenses with specific context:
-   \`\`\`
-   Tool: task
-   subagent_type: dragonfly-[lens-name]
-   prompt: [Specific analysis request with context and focus areas]
-   \`\`\`
-
-5. **Synthesize results**: After lenses complete, read their outputs from outputs/ and create an integrated analysis
-
-6. **Provide actionable recommendations**: Offer clear, evidence-based strategic insights
-
-## Guidelines
-
-- **Use available context**: Always read background files before invoking lenses
-- **Build on prior work**: Reference existing analyses in prior-reports/
-- **Provide detailed context to lenses**: Include specific file references when delegating
-- **Synthesize across sources**: Integrate new analysis with prior reports
-- **Be evidence-based**: Ground insights in the detailed background documentation
-`;
-
-// Save orchestrator prompt
-fs.writeFileSync(path.join(promptsDir, "orchestrator.md"), orchestratorPrompt);
-
-async function main() {
-  log("=".repeat(80));
-  log("DRAGONFLY LOGGED TEST SESSION");
-  log(`Session ID: ${timestamp}`);
-  log(`Session Directory: ${sessionDir}`);
-  log("=".repeat(80));
-
-  log("\n📊 Creating orchestrator agent with logging...");
-
-  // Create the orchestrator with logging hooks
-  const agent = createDeepAgent({
-    name: "dragonfly-orchestrator",
-    systemPrompt: orchestratorPrompt,
-    model: new ChatAnthropic({
-      model: "claude-sonnet-4-5-20250929",
-      temperature: 0,
-      callbacks: [{
-        handleLLMStart: async (llm: any, prompts: string[]) => {
-          log(`[Orchestrator] LLM Start`);
-          prompts.forEach((prompt, i) => {
-            logMessage("orchestrator", "system", prompt);
-          });
-        },
-        handleLLMEnd: async (output: any) => {
-          log(`[Orchestrator] LLM End`);
-          if (output.generations) {
-            output.generations.forEach((gen: any) => {
-              gen.forEach((g: any) => {
-                logMessage("orchestrator", "assistant", g.text);
-              });
-            });
-          }
-        },
-      }]
-    }),
-    backend: new FilesystemBackend({
-      rootDir: outputsDir,
-      virtualMode: true,
-    }),
-    subagents: lenses.map(lens => ({
-      ...lens,
-      // Add logging to each subagent
-      model: new ChatAnthropic({
-        model: "claude-sonnet-4-5-20250929",
-        temperature: 0,
-        callbacks: [{
-          handleLLMStart: async (llm: any, prompts: string[]) => {
-            log(`[${lens.name}] LLM Start`);
-            prompts.forEach((prompt) => {
-              logMessage(lens.name, "system", prompt);
-            });
-          },
-          handleLLMEnd: async (output: any) => {
-            log(`[${lens.name}] LLM End`);
-            if (output.generations) {
-              output.generations.forEach((gen: any) => {
-                gen.forEach((g: any) => {
-                  logMessage(lens.name, "assistant", g.text);
-                });
-              });
-            }
-          },
-        }]
-      }),
-    })),
-  });
-
-  log("✅ Agent created successfully\n");
-
-  const testPrompt = "Conduct a strategic analysis of the UAE AI Strategy 2031 implementation. Review the background documentation and prior reports, then select and use the most appropriate analytical lenses from the available options to provide actionable insights for strategy execution.";
-  log(`📝 Test Prompt: "${testPrompt}"\n`);
-
-  log("🚀 Starting agent invocation...\n");
-  const startTime = Date.now();
-
-  try {
-    const result = await agent.invoke(
-      {
-        messages: [{
-          role: "user",
-          content: testPrompt
-        }],
-      },
-      { recursionLimit: 150 }
-    );
-
-    const duration = Date.now() - startTime;
-
-    log("\n" + "=".repeat(80));
-    log(`✅ Test completed in ${(duration / 1000).toFixed(1)}s`);
-    log(`💬 Total messages: ${result.messages.length}`);
-    log("=".repeat(80));
-
-    // Save full result
-    fs.writeFileSync(
-      path.join(logsDir, "full-result.json"),
-      JSON.stringify(result, null, 2)
-    );
-
-    // Check for generated files
-    const files = fs.readdirSync(outputsDir);
-    log(`\n📄 Generated ${files.length} artifacts:`);
-    files.forEach(file => {
-      const stats = fs.statSync(path.join(outputsDir, file));
-      const sizeKB = (stats.size / 1024).toFixed(1);
-      log(`  ✓ ${file} (${sizeKB} KB)`);
-    });
-
-    // Create summary report
-    const summary = {
-      sessionId: timestamp,
-      duration: `${(duration / 1000).toFixed(1)}s`,
-      messagesExchanged: result.messages.length,
-      toolCallsCount: allToolCalls.length,
-      agentInvocations: allAgentInvocations.length,
-      artifactsCreated: files.length,
-      artifacts: files.map(f => ({
-        name: f,
-        size: `${(fs.statSync(path.join(outputsDir, f)).size / 1024).toFixed(1)} KB`
-      }))
-    };
-
-    fs.writeFileSync(
-      path.join(sessionDir, "SUMMARY.json"),
-      JSON.stringify(summary, null, 2)
-    );
-
-    log(`\n📊 Summary saved to: ${path.join(sessionDir, "SUMMARY.json")}`);
-    log(`📁 All session data available at: ${sessionDir}`);
-
-  } catch (error) {
-    log("\n💥 ERROR:");
-    log(error instanceof Error ? error.message : String(error));
-    log((error as any).stack || '');
-    throw error;
-  }
-}
-
-log("Starting logged test runner...\n");
-main().catch(error => {
-  log("\n💥 Fatal Error:");
-  log(error instanceof Error ? error.message : String(error));
-  process.exit(1);
-});

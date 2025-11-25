@@ -1,0 +1,19 @@
+{
+  "sessionId": "2025-11-21T08-39-35",
+  "test1": {
+    "duration": "10.7s",
+    "messagesExchanged": 2
+  },
+  "test2": {
+    "duration": "201.3s",
+    "messagesExchanged": 13,
+    "artifactsCreated": 1
+  },
+  "totalDuration": "212.1s",
+  "artifacts": [
+    {
+      "name": "outputs",
+      "size": "0.1 KB"
+    }
+  ]
+}

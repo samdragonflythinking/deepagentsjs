@@ -1,0 +1,12 @@
+[2025-11-19T10:31:16.157Z] Starting intelligent selection test...
+
+[2025-11-19T10:31:16.157Z] ================================================================================
+[2025-11-19T10:31:16.157Z] INTELLIGENT LENS SELECTION TEST
+[2025-11-19T10:31:16.157Z] Session ID: 2025-11-19T10-31-16
+[2025-11-19T10:31:16.157Z] Session Directory: /Users/sam/Documents/GitHub/deepagentsjs/agent-testing/selection-test-2025-11-19T10-31-16
+[2025-11-19T10:31:16.157Z] ================================================================================
+[2025-11-19T10:31:16.157Z] 
+📊 Creating orchestrator agent...
+[2025-11-19T10:31:16.157Z] 
+💥 Fatal Error:
+[2025-11-19T10:31:16.157Z] Anthropic API key not found

@@ -16,9 +16,21 @@ This guide documents best practices for writing lens agent prompts that prevent 
 
 ## Required Prompt Structure
 
+**⚠️ CRITICAL: ALL LENS PROMPTS MUST INCLUDE CONSTRAINT GUIDELINES**
+
+Without the explicit guidelines block, lenses WILL hit recursion limits and fail (100+ LLM cycles). This has been validated across multiple test sessions:
+
+- **Porter WITHOUT guidelines**: ❌ Failed (100 cycles, recursion limit, 52 min runtime)
+- **Stakeholder WITHOUT guidelines**: ❌ Failed (100 cycles, recursion limit, 64 min runtime)
+- **ALL lenses WITH guidelines**: ✅ Success (6-8 cycles each, ~3-5 min runtime)
+
+**This is not optional. Every lens must have these constraints, regardless of framework type.**
+
 Every lens prompt MUST include these elements in this order:
 
-### 1. Explicit Guidelines Block (CRITICAL)
+### 1. Explicit Guidelines Block (CRITICAL - REQUIRED FOR ALL LENSES)
+
+**This block is MANDATORY for EVERY lens prompt, no exceptions.**
 
 Place this at the very beginning of the lens instructions, before the numbered steps:
 
@@ -340,11 +352,63 @@ Add constraints → Test again → Document pattern
 
 ---
 
+## Lens Creation Checklist (For Subagents)
+
+When creating a new lens prompt, follow this checklist step-by-step:
+
+**Step 1: Read the source prompt**
+- [ ] Read the original Dragonfly lens prompt file
+- [ ] Identify the core analytical framework
+- [ ] Note the key sections and output structure
+
+**Step 2: Create the guidelines block (MANDATORY)**
+- [ ] Add `**IMPORTANT GUIDELINES**:` header at the very top
+- [ ] Include: "Base your analysis ONLY on information available in the background documentation"
+- [ ] Include: "After reviewing the background materials ONCE, proceed directly to creating the analysis"
+- [ ] Include: "Do not attempt exhaustive research or re-read files multiple times"
+- [ ] Include: "Prioritize completing the analysis over perfect accuracy"
+- [ ] Add domain-specific constraint if needed (e.g., "Use role-based categories" for stakeholder lenses)
+
+**Step 3: Define the analysis structure**
+- [ ] Specify 3-5 main sections (not more)
+- [ ] Each section should have 2-4 points
+- [ ] Use concrete section names (not "Section 1, Section 2")
+- [ ] Avoid open-ended requirements ("as many as needed", "comprehensive list")
+
+**Step 4: Simplify attributes**
+- [ ] Limit to 2-3 attributes per analyzed item
+- [ ] Combine related attributes where possible
+- [ ] Avoid multi-dimensional complexity (4+ attributes will cause loops)
+
+**Step 5: Add file save instructions**
+- [ ] Specify exact file path format: `outputs/[lens-slug]-[topic-slug]-2025-11-18.md`
+- [ ] Include: "content: Your complete [Lens Type] analysis"
+- [ ] Add completion response: "Respond: '[Lens name] analysis complete'"
+
+**Step 6: Add anti-question directive**
+- [ ] End with: "Do not ask questions. Just create and save the analysis."
+
+**Step 7: Validate the prompt**
+- [ ] Total prompt length < 250 lines
+- [ ] Guidelines block appears FIRST (before framework description)
+- [ ] No recursive or iterative instructions ("review and refine", "iterate until perfect")
+- [ ] Clear completion criteria (not "do your best" or "be thorough")
+
+**Step 8: Format for TypeScript**
+- [ ] Wrap in proper TypeScript object structure
+- [ ] Use template literal syntax with `${globalContext}`
+- [ ] Escape any backticks in the prompt content
+- [ ] Include name, description, and systemPrompt fields
+
+---
+
 ## Summary Checklist
+
+**⚠️ WARNING: Skipping the guidelines block will cause 100+ cycle recursion loops and failures!**
 
 Before deploying any lens prompt, verify:
 
-- [ ] **Guidelines block** at the top with research constraints
+- [ ] **🔥 CRITICAL: Guidelines block** at the top with research constraints (MANDATORY - not optional!)
 - [ ] **Role-based categories** for any entity identification tasks
 - [ ] **2-3 attributes max** per analyzed item
 - [ ] **Exact section structure** specified (not open-ended)
