@@ -1,0 +1,318 @@
+# 1. Scenario Planning for Portfolio Strategy
+# Investment-focused scenario analysis with portfolio resilience and monitoring
+
+id: scenario-planning-portfolio
+version: "3.0"
+name: "Scenario Planning for Portfolio Strategy"
+category: investment_strategy
+description: "Investment-focused scenario analysis for portfolio allocation decisions under uncertainty. Build scenarios of portfolio environments, understand systemic interactions, and design resilient allocations with rebalancing triggers."
+
+# Workflow Purpose & Approach
+purpose: |
+  This workflow helps investors, fund managers, and CFOs make portfolio allocation decisions under deep uncertainty.
+  Instead of predicting a single future, you explore multiple plausible futures (scenarios) and build a portfolio
+  strategy that performs well across all of them.
+
+approach: |
+  We use a "Core → Complete → Comprehensive" progression:
+
+  - CORE: Understand what futures are possible and how they affect your portfolio (scenario construction)
+  - COMPLETE: Understand how portfolio drivers interact systemically (systems analysis for portfolio dynamics)
+  - COMPREHENSIVE: Build resilient portfolio allocations with stress testing and rebalancing triggers (portfolio strategy)
+
+  Each tier answers a strategic question and provides a natural stopping point. You get value at each tier,
+  but can go deeper if the investment decision warrants it.
+
+for: |
+  - Investment portfolio allocation under uncertainty
+  - Asset allocation strategy across different economic/market scenarios
+  - Capital deployment decisions when futures are uncertain
+  - Portfolio rebalancing triggers based on scenario signals
+  - Fund strategy and risk management
+
+  Best for: Investors, fund managers, CFOs, investment committees, portfolio strategists
+
+use_cases:
+  - portfolio_allocation
+  - investment_strategy
+  - asset_allocation
+  - capital_deployment
+  - portfolio_risk_management
+
+problem_types:
+  - uncertainty
+  - portfolio_strategy
+  - investment_decisions
+  - scenario_based_investing
+
+thematic_categories:
+  - 02-risk-analysis
+  - 03-systems-analysis
+  - 04-scenario-analysis
+  - 05-investment-strategy
+
+# Three-tier workflow structure (Core / Complete / Comprehensive)
+modes:
+  core:
+    name: "Core: What futures affect our portfolio?"
+    description: "Understand the scenarios your portfolio must navigate"
+    question: "What futures affect our portfolio?"
+    lenses: 3
+
+    sequence:
+      - step: 1
+        lens_id: dragonfly-ai
+        lens_name: "Dragonfly AI"
+        purpose: "Investment context framing - understand portfolio challenge and uncertainty drivers"
+        required: true
+        outputs: [investment_context, portfolio_challenge]
+
+      - step: 2
+        lens_id: dragonfly-pestle-analysis
+        lens_name: "PESTLE Analysis"
+        purpose: "Identify macro forces affecting portfolio (economic, political, technological, regulatory trends)"
+        required: true
+        inputs_from: [investment_context]
+        outputs: [macro_driver_analysis, portfolio_risk_factors]
+
+      - step: 3
+        lens_id: dragonfly-trends-uncertainties
+        lens_name: "Trends & Uncertainties"
+        purpose: "Score drivers by Impact/Uncertainty/Velocity for investment risk; identify scenario axes"
+        required: true
+        inputs_from: [macro_driver_analysis]
+        outputs: [trends_assessment_table, critical_uncertainties, scenario_axes]
+
+      - step: 4
+        lens_id: dragonfly-four-scenarios
+        lens_name: "Four Scenarios (2×2 Matrix)"
+        purpose: "Build 2×2 matrix of portfolio environments with quantified implications"
+        required: true
+        inputs_from: [trends_assessment_table, scenario_axes]
+        outputs: [scenario_matrix, four_portfolio_environments, implication_matrix]
+
+    outputs: "Four scenario narratives showing different portfolio environments with quantified uncertainties"
+
+    why_stop_here: |
+      You understand the futures your portfolio must navigate. You have four plausible scenarios showing different
+      macro environments and their implications for asset classes. This is sufficient for basic allocation decisions
+      and risk discussions with investment committees.
+
+    deliverables:
+      - PESTLE macro driver analysis focused on portfolio impacts
+      - Impact/Uncertainty/Velocity scoring table for investment drivers
+      - 2×2 scenario matrix with four distinct portfolio environments
+      - Implication matrix showing how each scenario affects different asset classes/holdings
+
+    checkpoint:
+      after_step: 4
+      type: scenario_sufficiency
+      prompt: "Review four scenarios. Are they distinct enough to drive different portfolio strategies? Proceed to systems analysis only if portfolio dynamics matter."
+      critical: false
+
+  complete:
+    name: "Complete: How do portfolio drivers interact systemically?"
+    description: "Understand portfolio dynamics and interdependencies across scenarios"
+    question: "How do portfolio drivers interact systemically?"
+    lenses: 3
+    requires: [scenario_matrix, trends_assessment_table]
+
+    sequence:
+      - step: 5
+        lens_id: dragonfly-network-connections
+        lens_name: "Network & Connections"
+        purpose: "Map system relationships affecting portfolio (sector interdependencies, cascading risks)"
+        required: true
+        inputs_from: [scenario_matrix, macro_driver_analysis]
+        outputs: [portfolio_systems_map, driver_interdependencies, cascade_pathways]
+
+      - step: 5.1
+        lens_id: system-task
+        lens_name: "Publish Connections to Visualizer"
+        purpose: "Automatically publish Connections JSON into Complex Systems Map"
+        required: false
+        mode: "systems_analysis"
+        tier: systems_analysis
+        inputs_from: [connection_map]
+        outputs: [visualizer_map_entry]
+        implementation:
+        type: shell
+        command: |
+          make viz-publish-connections \
+        input="projects/${project_id}/data/connections-${project_slug}.json" \
+        topic="${project_title} (Connections)"
+
+      - step: 6
+        lens_id: dragonfly-feedback-loops-tipping-points
+        lens_name: "Feedback Loops & Tipping Points"
+        purpose: "Analyze reinforcing/balancing dynamics that could impact holdings (market feedback loops, tipping points)"
+        required: true
+        inputs_from: [portfolio_systems_map, scenario_matrix]
+        outputs: [feedback_loop_analysis, market_tipping_points, cascade_triggers]
+
+      - step: 7
+        lens_id: dragonfly-synergies-trade-offs
+        lens_name: "Synergies & Trade-offs"
+        purpose: "Understand portfolio interaction effects across scenarios (diversification benefits, correlation shifts)"
+        required: true
+        inputs_from: [portfolio_systems_map, scenario_matrix]
+        outputs: [portfolio_synergy_analysis, correlation_dynamics, diversification_map]
+
+    outputs: "Systems map showing how portfolio holdings interact across scenario futures with feedback dynamics"
+
+    why_stop_here: |
+      You understand portfolio dynamics and interdependencies. You know how holdings interact, where feedback loops
+      amplify or dampen returns, and which correlations shift across scenarios. This enables sophisticated
+      diversification strategies and helps identify non-obvious portfolio risks.
+
+    deliverables:
+      - Portfolio systems map showing driver relationships and cascades
+      - Feedback loop analysis (reinforcing/balancing dynamics affecting returns)
+      - Synergies and trade-offs matrix across scenarios
+      - Correlation shift analysis (how diversification changes across futures)
+
+    checkpoint:
+      after_step: 7
+      type: portfolio_data_readiness
+      prompt: "Do we have portfolio composition data (current allocations, constraints, risk tolerance) to proceed to resilience analysis?"
+      critical: true
+
+  comprehensive:
+    name: "Comprehensive: How do we build anti-fragile portfolio with monitoring?"
+    description: "Build resilient portfolio allocation with stress testing and rebalancing triggers"
+    question: "How do we build anti-fragile portfolio with monitoring?"
+    lenses: 3
+    requires: [scenario_matrix, portfolio_systems_map, portfolio_composition_data]
+
+    sequence:
+      - step: 8
+        lens_id: dragonfly-portfolio-resilience-standard
+        lens_name: "Portfolio Resilience Analysis"
+        purpose: "Design Core-Satellite-Hedge allocation robust across all scenarios"
+        required: true
+        inputs_from: [scenario_matrix, portfolio_synergy_analysis, portfolio_composition]
+        outputs: [portfolio_allocation_strategy, core_satellite_hedge_framework, scenario_performance_matrix]
+
+      - step: 9
+        lens_id: dragonfly-scenario-stress-testing
+        lens_name: "Scenario Stress Testing"
+        purpose: "Test portfolio strategies against all futures; identify vulnerabilities and breaking points"
+        required: true
+        inputs_from: [portfolio_allocation_strategy, scenario_matrix]
+        outputs: [stress_test_grid, vulnerability_map, scenario_performance_analysis]
+
+      - step: 10
+        lens_id: dragonfly-scenario-signposts-trigger-points
+        lens_name: "Scenario Signposts & Trigger Points"
+        purpose: "Build early warning system with rebalancing triggers based on scenario signals"
+        required: true
+        inputs_from: [scenario_matrix, stress_test_grid, feedback_loop_analysis]
+        outputs: [signpost_library, rebalancing_triggers, monitoring_framework]
+
+    outputs: "Resilient portfolio allocation + stress test results + rebalancing triggers"
+
+    why_stop_here: |
+      Complete portfolio strategy robust across scenarios with automatic monitoring triggers. You have:
+      - Core-Satellite-Hedge allocations that perform across all futures
+      - Stress test results showing vulnerabilities and breaking points
+      - Early warning indicators that signal when to rebalance
+
+      This is a fully operational portfolio strategy with built-in adaptation mechanisms.
+
+    deliverables:
+      - Portfolio resilience allocation (Core-Satellite-Hedge framework)
+      - Scenario stress test grid with performance across all futures
+      - Vulnerability map highlighting portfolio breaking points
+      - Signpost library with leading indicators for each scenario
+      - Rebalancing trigger matrix (what signals prompt what portfolio moves)
+      - Monitoring framework with ownership and review cadence
+
+# Success indicators
+success_indicators:
+  core:
+    - Four distinct portfolio environments identified
+    - Critical uncertainties affecting investments quantified
+    - Scenario axes validated for driving different investment strategies
+    - Implication matrix shows differential impact across asset classes
+
+  complete:
+    - Portfolio systems map reveals non-obvious interdependencies
+    - Feedback loops affecting returns identified and quantified
+    - Correlation shifts across scenarios documented
+    - Diversification benefits/risks mapped across futures
+
+  comprehensive:
+    - Portfolio allocation robust across all scenarios (no catastrophic failures)
+    - Stress testing reveals vulnerabilities with mitigation strategies
+    - Rebalancing triggers linked to observable leading indicators
+    - Monitoring framework adopted by portfolio management team
+
+# Metadata
+tags:
+  - portfolio_strategy
+  - scenario_planning
+  - investment_allocation
+  - portfolio_resilience
+  - risk_management
+
+keywords:
+  - portfolio allocation
+  - scenario investing
+  - asset allocation
+  - portfolio resilience
+  - investment strategy
+  - scenario analysis
+  - portfolio risk
+
+# Related workflows
+related_workflows:
+  - scenario-deep-dive  # For comprehensive scenario exploration beyond portfolio focus
+  - assumption-testing  # For validating investment assumptions
+  - risk-reward-resilience  # For portfolio risk assessment
+
+# Usage guidance
+usage_notes:
+  - "Investment-focused workflow - assumes portfolio allocation decision context"
+  - "Requires portfolio composition data before Comprehensive tier"
+  - "Core tier sufficient for initial scenario-based allocation discussions"
+  - "Complete tier adds sophistication through systems dynamics understanding"
+  - "Comprehensive tier delivers complete portfolio strategy with monitoring"
+  - "For non-investment scenario planning, use Scenario Deep-Dive Suite instead"
+
+# LLM Orchestrator Guidance
+llm_guidance: |
+  When executing this workflow, you are helping an investment decision-maker (fund manager, CFO, investor)
+  build a portfolio strategy that works across multiple futures.
+
+  Your role at each tier:
+
+  CORE TIER: Frame the investment challenge, identify macro drivers affecting the portfolio, and build four
+  distinct scenarios showing different portfolio environments. Focus on how economic, political, technological,
+  and market forces create different futures for asset performance. Use investment language (returns, volatility,
+  correlation, asset classes).
+
+  COMPLETE TIER: Map how portfolio holdings interact systemically. Identify feedback loops (e.g., "rising rates →
+  bond selloff → equity volatility → risk-off sentiment → flight to quality"). Show how diversification benefits
+  shift across scenarios. Use systems thinking to reveal non-obvious portfolio dynamics.
+
+  COMPREHENSIVE TIER: Design a portfolio allocation using Core-Satellite-Hedge framework that performs across all
+  scenarios. Stress test it. Build monitoring triggers that signal when scenarios are unfolding so the portfolio
+  can adapt. Deliver an actionable portfolio strategy, not just analysis.
+
+  Key principles:
+  - Use investment terminology (alpha, beta, drawdown, Sharpe ratio, correlation)
+  - Quantify when possible (% returns, volatility ranges, probability estimates)
+  - Focus on actionable portfolio decisions, not abstract scenarios
+  - Make rebalancing triggers specific and observable
+  - Consider practical constraints (liquidity, transaction costs, tax implications)
+
+version_history:
+  - version: "3.0"
+    date: "2025-11-10"
+    changes: "Redesigned to Core/Complete/Comprehensive structure with investment focus"
+  - version: "2.0"
+    date: "2025-10-24"
+    changes: "Three-tier scenario planning structure"
+  - version: "1.0"
+    date: "2025-10-20"
+    changes: "Initial scenario planning workflow"
